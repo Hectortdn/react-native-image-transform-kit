@@ -1,5 +1,5 @@
 {
-  "name": "rn-image-crop-transform-kit",
+  "name": "react-native-image-transform-kit",
   "version": "0.1.0",
   "description": "Image cropping tool developed in TypeScript, offering support for aspect ratio adjustments, rotation, and zoom.",
   "source": "./src/index.tsx",
@@ -36,7 +36,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace rn-image-crop-transform-kit-example",
+    "example": "yarn workspace react-native-image-transform-kit-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -51,14 +51,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hectortdn/rn-image-crop-transform-kit/rn-image-crop-transform-kit.git"
+    "url": "git+https://github.com/Hectortdn/react-native-image-transform-kit"
   },
-  "author": "Hectortdn <hector.kayqu012@gmail.com> (https://github.com/Hectortdn/rn-image-crop-transform-kit)",
+  "author": "Hectortdn <hector.kayqu012@gmail.com> (https://github.com/Hectortdn/react-native-image-transform-kit)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Hectortdn/rn-image-crop-transform-kit/rn-image-crop-transform-kit/issues"
+    "url": "https://github.com/Hectortdn/react-native-image-transform-kit/issues"
   },
-  "homepage": "https://github.com/Hectortdn/rn-image-crop-transform-kit/rn-image-crop-transform-kit#readme",
+  "homepage": "https://github.com/Hectortdn/react-native-image-transform-kit#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -77,7 +77,7 @@
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react": "18.2.0",
-    "react-native": "0.74.5",
+    "react-native": "0.72.6",
     "react-native-builder-bob": "^0.30.0",
     "release-it": "^15.0.0",
     "typescript": "^5.2.2"
@@ -181,5 +181,10 @@
   "create-react-native-library": {
     "type": "library",
     "version": "0.41.0"
+  },
+  "dependencies": {
+    "react-native-gesture-handler": "^2.19.0",
+    "react-native-reanimated": "^3.15.1",
+    "react-native-svg": "^15.6.0"
   }
 }

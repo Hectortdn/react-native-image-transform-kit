@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'rn-image-crop-transform-kit';
+import { StyleSheet, View } from 'react-native';
+import { CropView } from 'rn-image-crop-transform-kit';
 
 export default function App() {
-  const [result, setResult] = useState<number | undefined>();
-
-  useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <CropView
+        imageWidth={550}
+        imageHeight={400}
+        imageUri="https://miro.medium.com/v2/resize:fit:1024/0*74NwxNdMYcbJ6RPL.png"
+        onCancel={() => console.log('cancel image transform')}
+        onConclude={() => console.log('conclude image transform')}
+      />
     </View>
   );
 }
@@ -19,8 +18,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   box: {
     width: 60,
