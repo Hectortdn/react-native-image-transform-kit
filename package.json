@@ -5,6 +5,7 @@
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
+  "types": "./lib/typescript/commonjs/src/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -20,21 +21,9 @@
   "files": [
     "src",
     "lib",
-    "android",
-    "ios",
-    "cpp",
-    "*.podspec",
-    "!ios/build",
-    "!android/build",
-    "!android/gradle",
-    "!android/gradlew",
-    "!android/gradlew.bat",
-    "!android/local.properties",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__",
-    "!**/.*",
-    "lib/typescript"
+    "!**/__mocks__"
   ],
   "scripts": {
     "example": "yarn workspace react-native-image-transform-kit-example",
@@ -155,8 +144,8 @@
     "useTabs": false
   },
   "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
+    "source": "./src",
+    "output": "./lib",
     "targets": [
       [
         "commonjs",
