@@ -1,4 +1,4 @@
-import type { ImageProps } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { type SharedValue } from 'react-native-reanimated';
 
 export type Dimensions = {
@@ -48,8 +48,9 @@ export interface TranFormImageContext {
   } & Dimensions;
 }
 
-export interface TransformImageViewProps extends Omit<ImageProps, 'source'> {
+export interface TransformImageViewProps extends Dimensions {
   imageUri: string;
+  style?: ImageStyle;
 }
 export interface TransformImageViewRefProps {
   getCurrentScale: () => number;

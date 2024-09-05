@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-transform-kit",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Image cropping tool developed in TypeScript, offering support for aspect ratio adjustments, rotation, and zoom.",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",

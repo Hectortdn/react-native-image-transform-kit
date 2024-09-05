@@ -10,10 +10,10 @@ import { GridView } from './grid-view';
 
 interface CropImageViewProps extends TransformImageViewProps {}
 
-export function CropImageView({ imageUri }: CropImageViewProps) {
+export function CropImageView({ imageUri, height, width }: CropImageViewProps) {
   return (
     <Animated.View collapsable={false} style={st.container}>
-      <TransformImageView imageUri={imageUri} />
+      <TransformImageView imageUri={imageUri} height={height} width={width} />
       <GridView />
     </Animated.View>
   );

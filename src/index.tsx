@@ -36,7 +36,11 @@ export function CropView({
           onManipulate={onManipulate}
         />
         <GestureImageView>
-          <CropImageView imageUri={imageUri} />
+          <CropImageView
+            imageUri={imageUri}
+            height={imageHeight}
+            width={imageHeight}
+          />
         </GestureImageView>
         <EditImage />
       </TranFormImage>
