@@ -33,7 +33,9 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!**/.*"
+    "!**/.*",
+    "lib/typescript"
+
   ],
   "scripts": {
     "example": "yarn workspace react-native-image-transform-kit-example",
