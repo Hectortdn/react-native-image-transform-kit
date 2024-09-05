@@ -1,26 +1,22 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext } from 'react';
-import {
-  Easing,
-  withTiming,
-  useSharedValue,
-  useAnimatedReaction,
-} from 'react-native-reanimated';
+import { Easing, withTiming, useSharedValue } from 'react-native-reanimated';
 import {
   trapToRect,
   rotatePoint,
-  resizeImage,
   calculateRectCenter,
   calculateRectCoords,
   calculateImageAspect,
   isRectangleContained,
   rotateRectangleCorners,
   getRectSidesFromCorners,
-  getIntrinsicImageDimensions,
   calculateBoundsRotatedImage,
 } from '../utils/functions';
 
-import { type TranFormImageProps, type TranFormImageContext } from './types';
+import {
+  type ImageData,
+  type TranFormImageProps,
+  type TranFormImageContext,
+} from './types';
 
 import { RECT_EDIT_HEIGHT, RECT_EDIT_WIDTH } from '../utils/constants';
 
@@ -41,16 +37,15 @@ export function TranFormImage({
 
   const imageScale = useSharedValue(1);
   const imageAngleDree = useSharedValue(0);
+  const baseImage = useSharedValue({} as ImageData);
   const imageTranslate = useSharedValue({ x: 0, y: 0 });
-  const baseImage = useSharedValue(
-    resizeImage({ height: imageHeight, width: imageWidth })
-  );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function postTranslate(translate: { x: number; y: number }) {
     'worklet';
     imageTranslate.value = translate;
   }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function postScale(newScale: number) {
     'worklet';
     imageScale.value = newScale;
@@ -65,6 +60,7 @@ export function TranFormImage({
     'worklet';
     const scale = imageScale.value;
     const dimensions = baseImage.value;
+
     const coord = imageTranslate.value;
     const angleDree = imageAngleDree.value;
 
@@ -189,16 +185,16 @@ export function TranFormImage({
 
       const { deltaScale, deltaX, deltaY, needScaleUpdate } = props;
 
-      imageTranslate.value = withTiming(
-        { x: deltaX, y: deltaY },
-        { easing: Easing.inOut(Easing.cubic) }
-      );
-
       if (needScaleUpdate) {
         imageScale.value = withTiming(imageScale.value + deltaScale, {
           easing: Easing.inOut(Easing.cubic),
         });
       }
+
+      imageTranslate.value = withTiming(
+        { x: deltaX, y: deltaY },
+        { easing: Easing.inOut(Easing.cubic) }
+      );
     },
     [imageScale, imageTranslate]
   );
@@ -256,10 +252,11 @@ export function TranFormImage({
     ]
   );
 
-  const setCropBoundsAspectRatio = (aspectRadio: number) => {
-    'worklet';
-    cropBounds.value = calculateImageAspect(aspectRadio);
-    setImageToWrapCropBounds();
+  const setCropBoundsAspectRatio = (aspectRatio: number) => {
+    cropBounds.value = calculateImageAspect(aspectRatio);
+    requestAnimationFrame(() => {
+      setImageToWrapCropBounds(true);
+    });
   };
 
   const cropImage = React.useCallback(() => {
@@ -294,40 +291,20 @@ export function TranFormImage({
       ),
     };
 
-    return { rotate: imageAngleDree.value, crop };
+    try {
+      return { rotate: imageAngleDree.value, crop };
+    } catch (error) {
+      throw Error(error);
+    }
   }, [
-    trapToRect,
     imageWidth,
     imageHeight,
-    imageAngleDree,
+    imageAngleDree.value,
+    cropTranslate.value.x,
+    cropTranslate.value.y,
     getCurrentImageCorners,
     retrieveCurrentCropMetadata,
-    getIntrinsicImageDimensions,
-    calculateBoundsRotatedImage,
   ]);
-
-  useAnimatedReaction(
-    () => baseImage.value,
-    (value, prev) => {
-      if (
-        prev &&
-        (value.width !== prev.width || value.height !== prev.height)
-      ) {
-        setImageToWrapCropBounds(false);
-      }
-    },
-    [baseImage.value]
-  );
-
-  useAnimatedReaction(
-    () => cropBounds.value,
-    (value, prev) => {
-      if (value.width !== 0 || value.height !== prev?.width) {
-        setImageToWrapCropBounds();
-      }
-    },
-    [cropBounds.value]
-  );
 
   return (
     <Context.Provider
@@ -345,6 +322,8 @@ export function TranFormImage({
         imageTranslate,
         setCropBoundsAspectRatio,
         setImageToWrapCropBounds,
+        retrieveCurrentCropMetadata,
+        retrieveCurrentImageMetadata,
       }}
     >
       {children}

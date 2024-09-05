@@ -1,12 +1,19 @@
+import type { ImageProps } from 'react-native';
 import { type SharedValue } from 'react-native-reanimated';
-export interface RectDimensions {
+
+export type Dimensions = {
   width: number;
   height: number;
-}
+};
+
+export type Coords = {
+  x: number;
+  y: number;
+};
 
 export interface ManipulateImage {
   rotate: number;
-  crop: { originX: number; originY: number } & RectDimensions;
+  crop: { originX: number; originY: number } & Dimensions;
 }
 
 export interface TranFormImageProps {
@@ -16,19 +23,46 @@ export interface TranFormImageProps {
   children: React.ReactNode;
 }
 
+export type ImageData = { coord: Coords; center: Coords } & Dimensions;
+
 export interface TranFormImageContext {
   showGrid: SharedValue<boolean>;
   imageScale: SharedValue<number>;
+  baseImage: SharedValue<ImageData>;
   imageAngleDree: SharedValue<number>;
-  baseImage: SharedValue<RectDimensions>;
-  cropBounds: SharedValue<RectDimensions>;
-  cropTranslate: SharedValue<{ x: number; y: number }>;
-  imageTranslate: SharedValue<{ x: number; y: number }>;
+  cropBounds: SharedValue<Dimensions>;
+  cropTranslate: SharedValue<Coords>;
+  imageTranslate: SharedValue<Coords>;
 
   cropImage: () => ManipulateImage;
   postScale: (newScale: number) => void;
   postRotate: (newRotate: number) => void;
   setImageToWrapCropBounds: (animate: boolean) => void;
   setCropBoundsAspectRatio: (aspectRadio: number) => void;
-  postTranslate: (translate: { x: number; y: number }) => void;
+  postTranslate: (translate: Coords) => void;
+  retrieveCurrentCropMetadata(): { coord: Coords } & Dimensions;
+  retrieveCurrentImageMetadata(): {
+    coord: Coords;
+    scale: number;
+    angleDree: number;
+  } & Dimensions;
+}
+
+export interface TransformImageViewProps extends Omit<ImageProps, 'source'> {
+  imageUri: string;
+}
+export interface TransformImageViewRefProps {
+  getCurrentScale: () => number;
+  getCurrentAngle: () => number;
+  currentImageCorners: number[];
+  currentImageCenter: number[];
+  postTranslate: (deltaX: number, deltaY: number) => void;
+  postScale: (deltaScale: number, px: number, py: number) => void;
+  postRotate: (deltaAngle: number, px: number, py: number) => void;
+}
+
+export interface TransformerHeaderProps {
+  onCancel: () => void;
+  onConclude: (imageUriEdited: string) => void;
+  onManipulate?: (manipulate: ManipulateImage) => Promise<{ uri: string }>;
 }

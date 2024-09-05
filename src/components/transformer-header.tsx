@@ -1,16 +1,10 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View, Text } from 'react-native';
 
-import { type ManipulateImage } from './types';
+import { type TransformerHeaderProps } from './types';
 
 import { useTransformImage } from './transform-image';
 import { colors } from '../theme/theme';
-
-export interface TransformerHeaderProps {
-  onCancel: () => void;
-  onConclude: (imageUriEdited: string) => void;
-  onManipulate?: (manipulate: ManipulateImage) => Promise<{ uri: string }>;
-}
 
 export function TransformerHeader({
   onCancel,

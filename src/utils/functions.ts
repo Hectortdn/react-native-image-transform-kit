@@ -1,22 +1,24 @@
-import { Image } from 'react-native';
+import type { Coords } from '../components/types';
 import { RECT_EDIT_HEIGHT, RECT_EDIT_WIDTH } from './constants';
-
-type Dimensions = {
-  width: number;
-  height: number;
-};
 
 type Point = number[];
 type Points = Array<Point>;
 
-export function calculateRectCenter(rect: Points) {
+type PinchOptions = {
+  toScale: number;
+  fromScale: number;
+  origin: Coords;
+  offset: Coords;
+};
+
+function calculateRectCenter(rect: Points) {
   'worklet';
   let x = (rect[0][0] + rect[1][0] + rect[2][0] + rect[3][0]) / 4;
   let y = (rect[0][1] + rect[1][1] + rect[2][1] + rect[3][1]) / 4;
   return { x, y };
 }
 
-export function calculateRectCoords({
+function calculateRectCoords({
   x = 0,
   y = 0,
   height,
@@ -36,10 +38,10 @@ export function calculateRectCoords({
   return [topLeft, topRight, bottomRight, bottomLeft];
 }
 
-export function rotateRectangleCorners(
+function rotateRectangleCorners(
   coords: Points,
   angleDegrees: number,
-  center?: { x: number; y: number }
+  center?: Coords
 ) {
   'worklet';
 
@@ -62,7 +64,7 @@ export function rotateRectangleCorners(
   });
 }
 
-export function trapToRect(rectCorners: Points) {
+function trapToRect(rectCorners: Points) {
   'worklet';
 
   let left = Infinity;
@@ -85,10 +87,7 @@ export function trapToRect(rectCorners: Points) {
   return { left, top, right, bottom };
 }
 
-export function isRectangleContained(
-  rectCorns1: Points,
-  rectCorns2: number[][]
-) {
+function isRectangleContained(rectCorns1: Points, rectCorns2: number[][]) {
   'worklet';
 
   const rect1 = trapToRect(rectCorns1);
@@ -104,7 +103,7 @@ export function isRectangleContained(
   );
 }
 
-export function rotateIndents(indents: number[], angleDegrees: number) {
+function rotateIndents(indents: number[], angleDegrees: number) {
   'worklet';
 
   const [left, top, right, bottom] = indents;
@@ -121,7 +120,7 @@ export function rotateIndents(indents: number[], angleDegrees: number) {
   return trapToRect(rotated);
 }
 
-export function getRectSidesFromCorners(corners: Points) {
+function getRectSidesFromCorners(corners: Points) {
   'worklet';
 
   const cornersFlat = corners.flat();
@@ -138,7 +137,7 @@ export function getRectSidesFromCorners(corners: Points) {
   return { width, height };
 }
 
-export function calculateBoundsRotatedImage({
+function calculateBoundsRotatedImage({
   angleDree,
   height,
   width,
@@ -160,7 +159,7 @@ export function calculateBoundsRotatedImage({
   return { width: newWidth, height: newHeight };
 }
 
-export function rotatePoint(point: { x: number; y: number }, angle: number) {
+function rotatePoint(point: Coords, angle: number) {
   'worklet';
   const rad = angle * (Math.PI / 180);
   const cosAngle = Math.cos(rad);
@@ -171,7 +170,7 @@ export function rotatePoint(point: { x: number; y: number }, angle: number) {
   };
 }
 
-export function calculateImageAspect(aspectRatio: number) {
+function calculateImageAspect(aspectRatio: number) {
   'worklet';
   let width, height;
 
@@ -186,7 +185,8 @@ export function calculateImageAspect(aspectRatio: number) {
   return { width, height };
 }
 
-export function resizeImage(image: { width: number; height: number }) {
+function resizeImage(image: { width: number; height: number }) {
+  'worklet';
   const originalAspectRatio = image.width / image.height;
   const areaAspectRatio = RECT_EDIT_WIDTH / RECT_EDIT_HEIGHT;
 
@@ -203,25 +203,48 @@ export function resizeImage(image: { width: number; height: number }) {
   return { width, height };
 }
 
-export async function getIntrinsicImageDimensions(imageUri: string) {
-  const resultDimensions = await new Promise<Dimensions>(
-    async (resolve) =>
-      await Image.getSize(imageUri, (width, height) => {
-        'worklet';
-        resolve({ width, height });
-      })
-  );
-  return resultDimensions;
-}
-
-export const calculateCurrentValue = (
+function calculateCurrentValue(
   scrollPosition: number,
   stepWidth: number,
   gapBetweenItems: number,
   min: number,
   max: number,
   step: number
-) => {
+) {
   const index = Math.round(scrollPosition / (stepWidth + gapBetweenItems));
   return Math.min(Math.max(index * step + min, min), max);
+}
+
+function pinchTransform(options: PinchOptions): Coords {
+  'worklet';
+
+  const { toScale, fromScale, origin, offset } = options;
+  const scaleDiff = toScale / fromScale;
+
+  const x = origin.x + (offset.x - origin.x) * scaleDiff;
+  const y = origin.y + (offset.y - origin.y) * scaleDiff;
+
+  return { x, y };
+}
+
+function clamp(value: number, min: number, max: number): number {
+  'worklet';
+  return Math.max(min, Math.min(value, max));
+}
+
+export {
+  clamp,
+  trapToRect,
+  rotatePoint,
+  resizeImage,
+  rotateIndents,
+  pinchTransform,
+  calculateRectCenter,
+  calculateRectCoords,
+  isRectangleContained,
+  calculateImageAspect,
+  calculateCurrentValue,
+  rotateRectangleCorners,
+  getRectSidesFromCorners,
+  calculateBoundsRotatedImage,
 };

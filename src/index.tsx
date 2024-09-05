@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { type TransformerHeaderProps } from './components/transformer-header';
+import type { TransformerHeaderProps } from './components/types';
 
 import { TransformerHeader } from './components/transformer-header';
 import { GestureImageView } from './components/gesture-image-view';
@@ -9,7 +9,7 @@ import { TranFormImage } from './components/transform-image';
 import { CropImageView } from './components/crop-image-view';
 import { colors } from './theme/theme';
 
-interface UCropProps extends TransformerHeaderProps {
+interface CropViewProps extends TransformerHeaderProps {
   imageUri: string;
   imageWidth: number;
   imageHeight: number;
@@ -22,7 +22,7 @@ export function CropView({
   imageWidth,
   imageHeight,
   onManipulate,
-}: UCropProps) {
+}: CropViewProps) {
   return (
     <View style={st.container}>
       <TranFormImage
